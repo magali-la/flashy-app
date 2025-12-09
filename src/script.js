@@ -1,11 +1,35 @@
 // ========================================
+// Local Storage Management
+// ========================================
+const STORAGE_KEY = 'flashy_decks';
+
+function saveDecksToStorage() {
+  try {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(decks));
+  } catch (e) {
+    console.error('Failed to save decks to localStorage:', e);
+  }
+}
+
+function loadDecksFromStorage() {
+  try {
+    const stored = localStorage.getItem(STORAGE_KEY);
+    if (stored) {
+      decks = JSON.parse(stored);
+    }
+  } catch (e) {
+    console.error('Failed to load decks from localStorage:', e);
+  }
+}
+
+// ========================================
 // State Management (Multi-Deck Support)
 // ========================================
 let currentDeckName = 'Beginner French';
 let currentCardIndex = 0;
 let isCardFlipped = false;
 
-// Deck data structure
+// Default decks (used if localStorage is empty)
 let decks = {
   'Beginner French': [
     { front: 'Bonjour', back: 'Hello' },
@@ -317,6 +341,7 @@ function openNewCardModal() {
         back: formData['card-back'],
       });
       currentCardIndex = cards.length - 1;
+      saveDecksToStorage();
       renderCard();
     }
   });
@@ -339,6 +364,7 @@ function openEditCardModal() {
     if (formData['card-front'].trim() && formData['card-back'].trim()) {
       card.front = formData['card-front'];
       card.back = formData['card-back'];
+      saveDecksToStorage();
       renderCard();
     }
   });
@@ -352,10 +378,10 @@ function deleteCurrentCard() {
   if (!confirmed) return;
 
   cards.splice(currentCardIndex, 1);
-  // Adjust index
   if (currentCardIndex >= cards.length) {
     currentCardIndex = Math.max(0, cards.length - 1);
   }
+  saveDecksToStorage();
   renderCard();
 }
 
@@ -367,13 +393,44 @@ if (deleteCardBtn) deleteCardBtn.addEventListener('click', deleteCurrentCard);
 // Initialize: Mark Beginner French as active
 // ========================================
 function initializeUI() {
+  /* Load decks from localStorage first */
+  loadDecksFromStorage();
+
+  /* Rebuild sidebar deck items from loaded decks */
+  /* First, attach handlers to existing three default deck items */
+  document.querySelectorAll('.deck-item').forEach((item) => {
+    attachDeckItemClickHandler(item);
+  });
+
+  /* Then, add any additional decks that exist in localStorage but not in the DOM */
+  const existingDeckNames = new Set(
+    Array.from(document.querySelectorAll('.deck-item')).map(
+      (item) => item.textContent.trim()
+    )
+  );
+
+  Object.keys(decks).forEach((deckName) => {
+    if (!existingDeckNames.has(deckName)) {
+      /* Create new deck item in sidebar */
+      const newLi = document.createElement('li');
+      const newBtn = document.createElement('button');
+      newBtn.type = 'button';
+      newBtn.className = 'deck-item';
+      newBtn.textContent = deckName;
+
+      attachDeckItemClickHandler(newBtn);
+      newLi.appendChild(newBtn);
+      deckList.appendChild(newLi);
+    }
+  });
+
+  /* Mark Beginner French as active */
   document.querySelectorAll('.deck-item').forEach((item) => {
     if (item.textContent.trim() === 'Beginner French') {
       item.classList.add('active');
     } else {
       item.classList.remove('active');
     }
-    attachDeckItemClickHandler(item);
   });
 
   renderCard();
@@ -400,6 +457,7 @@ newDeckBtn.addEventListener('click', () => {
     if (formData['deck-name'].trim()) {
       const deckName = formData['deck-name'].trim();
       decks[deckName] = [];
+      saveDecksToStorage();
 
       const newLi = document.createElement('li');
       const newBtn = document.createElement('button');

@@ -1,22 +1,30 @@
 // ========================================
-// State Management
+// State Management (Multi-Deck Support)
 // ========================================
 let currentDeckName = 'Beginner French';
 let currentCardIndex = 0;
 let isCardFlipped = false;
 
-// Sample card data for Beginner French
-let cards = [
-  { front: 'Bonjour', back: 'Hello' },
-  { front: 'Au revoir', back: 'Goodbye' },
-  { front: 'Merci', back: 'Thank you' },
-  { front: 'S\'il vous plaît', back: 'Please' },
-];
+// Deck data structure
+let decks = {
+  'Beginner French': [
+    { front: 'Bonjour', back: 'Hello' },
+    { front: 'Au revoir', back: 'Goodbye' },
+    { front: 'Merci', back: 'Thank you' },
+    { front: 'S\'il vous plaît', back: 'Please' },
+  ],
+  'Coding 101': [],
+  'World Cuisines Class': [],
+};
+
+// Get current deck cards
+function getCurrentCards() {
+  return decks[currentDeckName] || [];
+}
 
 // ========================================
 // DOM Elements
 // ========================================
-const deckItems = document.querySelectorAll('.deck-item');
 const cardFront = document.querySelector('.card-front');
 const cardBack = document.querySelector('.card-back');
 const flipBtn = document.querySelector('[aria-label="Flip card"]');
@@ -24,40 +32,92 @@ const prevBtn = document.querySelector('[aria-label="Previous card"]');
 const nextBtn = document.querySelector('[aria-label="Next card"]');
 const shuffleBtn = document.querySelector('[aria-label="Shuffle deck"]');
 const newCardBtn = document.querySelector('[aria-label="Create new card"]');
+const newDeckBtn = document.querySelector('[aria-label="Create new deck"]');
 const deckTitle = document.querySelector('.text-4xl.font-bold');
-
-// ========================================
-// Initialize: Mark Beginner French as active
-// ========================================
-function initializeUI() {
-  deckItems.forEach((item) => {
-    if (item.textContent.trim() === 'Beginner French') {
-      item.classList.add('active');
-    }
-  });
-  renderCard();
-}
+const deckList = document.querySelector('.deck-list');
+const cardContainer = document.querySelector('.card');
+const cardArea = document.querySelector('.flex.justify-center.items-center');
 
 // ========================================
 // Card Navigation & Display
 // ========================================
 function renderCard() {
-  if (cards.length === 0) return;
+  const cards = getCurrentCards();
+  deckTitle.textContent = currentDeckName;
+
+  if (cards.length === 0) {
+    // Show empty state
+    showEmptyState();
+    return;
+  }
+
+  // Show card area
+  hideEmptyState();
 
   const card = cards[currentCardIndex];
   cardFront.textContent = card.front;
   cardBack.textContent = card.back;
   isCardFlipped = false;
 
-  // Reset card visibility
+  /* Reset card visibility */
   cardFront.classList.remove('hidden');
   cardFront.setAttribute('aria-hidden', 'false');
   cardBack.classList.add('hidden');
   cardBack.setAttribute('aria-hidden', 'true');
 }
 
+function showEmptyState() {
+  const emptyStateDiv = document.querySelector('.empty-state');
+  if (emptyStateDiv) {
+    emptyStateDiv.classList.remove('hidden');
+  } else {
+    // Create empty state if it doesn't exist
+    const newEmptyState = document.createElement('div');
+    newEmptyState.className = 'empty-state flex flex-col items-center justify-center w-full max-w-md min-h-64 py-8';
+    newEmptyState.innerHTML = `<p class="text-4xl font-bold text-gray-400">No cards yet!</p>`;
+    cardArea.appendChild(newEmptyState);
+  }
+
+  // Hide the card container
+  cardContainer.classList.add('hidden');
+}
+
+function hideEmptyState() {
+  const emptyStateDiv = document.querySelector('.empty-state');
+  if (emptyStateDiv) {
+    emptyStateDiv.classList.add('hidden');
+  }
+
+  // Show the card container
+  cardContainer.classList.remove('hidden');
+
+  // Re-query cardFront and cardBack to ensure they're the correct DOM elements
+  const cardFrontElement = document.querySelector('.card-front');
+  const cardBackElement = document.querySelector('.card-back');
+  
+  if (cardFrontElement) {
+    Object.defineProperty(window, 'cardFront', {
+      value: cardFrontElement,
+      writable: true,
+      configurable: true,
+    });
+  }
+  if (cardBackElement) {
+    Object.defineProperty(window, 'cardBack', {
+      value: cardBackElement,
+      writable: true,
+      configurable: true,
+    });
+  }
+}
+
 function flipCard() {
+  const cards = getCurrentCards();
+  if (cards.length === 0) return;
+
   isCardFlipped = !isCardFlipped;
+  const cardFront = document.querySelector('.card-front');
+  const cardBack = document.querySelector('.card-back');
 
   if (isCardFlipped) {
     cardFront.classList.add('hidden');
@@ -73,18 +133,23 @@ function flipCard() {
 }
 
 function nextCard() {
+  const cards = getCurrentCards();
   if (cards.length === 0) return;
   currentCardIndex = (currentCardIndex + 1) % cards.length;
   renderCard();
 }
 
 function prevCard() {
+  const cards = getCurrentCards();
   if (cards.length === 0) return;
   currentCardIndex = (currentCardIndex - 1 + cards.length) % cards.length;
   renderCard();
 }
 
 function shuffleDeck() {
+  const cards = getCurrentCards();
+  if (cards.length === 0) return;
+
   for (let i = cards.length - 1; i > 0; i--) {
     const j = Math.floor(Math.random() * (i + 1));
     [cards[i], cards[j]] = [cards[j], cards[i]];
@@ -99,7 +164,7 @@ function shuffleDeck() {
 class Modal {
   constructor(title, fields) {
     this.title = title;
-    this.fields = fields; // array of { label, id, value }
+    this.fields = fields;
     this.modal = null;
     this.previousFocus = null;
   }
@@ -124,14 +189,12 @@ class Modal {
 
     closeBtn.addEventListener('click', () => this.close());
 
-    // Close on ESC anywhere while modal is open
     this._onKeydown = (e) => {
       if (e.key === 'Escape') this.close();
       if (e.key === 'Tab') this.trapFocus(e);
     };
     document.addEventListener('keydown', this._onKeydown);
 
-    // Close when clicking the overlay (outside modal content)
     this._onOverlayClick = (e) => {
       if (e.target === this.modal) this.close();
     };
@@ -145,10 +208,7 @@ class Modal {
     this.modal.className = 'fixed inset-0 flex items-center justify-center z-50';
     this.modal.setAttribute('role', 'dialog');
     this.modal.setAttribute('aria-modal', 'true');
-
-    // Semi-transparent overlay (not black) so the user can still see the screen
-    this.modal.style.backgroundColor = 'rgba(255,255,255,0.65)'; // light translucent overlay
-    // optional subtle blur
+    this.modal.style.backgroundColor = 'rgba(255,255,255,0.65)';
     this.modal.style.backdropFilter = 'blur(4px)';
 
     const content = document.createElement('div');
@@ -201,9 +261,7 @@ class Modal {
   }
 
   trapFocus(e) {
-    const focusableElements = this.modal.querySelectorAll(
-      'input, button'
-    );
+    const focusableElements = this.modal.querySelectorAll('input, button');
     const firstElement = focusableElements[0];
     const lastElement = focusableElements[focusableElements.length - 1];
 
@@ -220,14 +278,62 @@ class Modal {
     if (this.modal) {
       this.modal.remove();
       this.modal = null;
-
-      // remove global listeners added in open()
       document.removeEventListener('keydown', this._onKeydown);
-      // overlay click listener removed automatically when modal element is removed
-
       if (this.previousFocus) this.previousFocus.focus();
     }
   }
+}
+
+// ========================================
+// Deck Item Click Handler
+// ========================================
+function attachDeckItemClickHandler(item) {
+  item.addEventListener('click', () => {
+    document.querySelectorAll('.deck-item').forEach((el) => el.classList.remove('active'));
+    item.classList.add('active');
+    currentDeckName = item.textContent.trim();
+    currentCardIndex = 0;
+    isCardFlipped = false;
+    renderCard();
+  });
+}
+
+// ========================================
+// Open New Card Modal
+// ========================================
+function openNewCardModal() {
+  const modal = new Modal('Add New Card', [
+    { label: 'Front (Question)', id: 'card-front', value: '' },
+    { label: 'Back (Answer)', id: 'card-back', value: '' },
+  ]);
+
+  modal.open((formData) => {
+    if (formData['card-front'].trim() && formData['card-back'].trim()) {
+      const cards = getCurrentCards();
+      cards.push({
+        front: formData['card-front'],
+        back: formData['card-back'],
+      });
+      currentCardIndex = cards.length - 1;
+      renderCard();
+    }
+  });
+}
+
+// ========================================
+// Initialize: Mark Beginner French as active
+// ========================================
+function initializeUI() {
+  document.querySelectorAll('.deck-item').forEach((item) => {
+    if (item.textContent.trim() === 'Beginner French') {
+      item.classList.add('active');
+    } else {
+      item.classList.remove('active');
+    }
+    attachDeckItemClickHandler(item);
+  });
+
+  renderCard();
 }
 
 // ========================================
@@ -238,38 +344,36 @@ prevBtn.addEventListener('click', prevCard);
 nextBtn.addEventListener('click', nextCard);
 shuffleBtn.addEventListener('click', shuffleDeck);
 
-/* Add click listener to card container to flip on click */
-const cardContainer = document.querySelector('.card');
 cardContainer.addEventListener('click', flipCard);
 
-newCardBtn.addEventListener('click', () => {
-  const modal = new Modal('Add New Card', [
-    { label: 'Front (Question)', id: 'card-front', value: '' },
-    { label: 'Back (Answer)', id: 'card-back', value: '' },
-  ]);
+newCardBtn.addEventListener('click', openNewCardModal);
 
-  modal.open((formData) => {
-    if (formData['card-front'].trim() && formData['card-back'].trim()) {
-      cards.push({
-        front: formData['card-front'],
-        back: formData['card-back'],
-      });
-      currentCardIndex = cards.length - 1;
-      renderCard();
-    }
-  });
-});
-
-// Placeholder for edit deck name (optional enhancement)
-deckTitle.addEventListener('dblclick', () => {
-  const modal = new Modal('Edit Deck Name', [
-    { label: 'Deck Name', id: 'deck-name', value: currentDeckName },
+newDeckBtn.addEventListener('click', () => {
+  const modal = new Modal('Create New Deck', [
+    { label: 'Deck Name', id: 'deck-name', value: '' },
   ]);
 
   modal.open((formData) => {
     if (formData['deck-name'].trim()) {
-      currentDeckName = formData['deck-name'];
-      deckTitle.textContent = currentDeckName;
+      const deckName = formData['deck-name'].trim();
+      decks[deckName] = [];
+
+      const newLi = document.createElement('li');
+      const newBtn = document.createElement('button');
+      newBtn.type = 'button';
+      newBtn.className = 'deck-item';
+      newBtn.textContent = deckName;
+
+      attachDeckItemClickHandler(newBtn);
+      newLi.appendChild(newBtn);
+      deckList.appendChild(newLi);
+
+      document.querySelectorAll('.deck-item').forEach((el) => el.classList.remove('active'));
+      newBtn.classList.add('active');
+      currentDeckName = deckName;
+      currentCardIndex = 0;
+      isCardFlipped = false;
+      renderCard();
     }
   });
 });

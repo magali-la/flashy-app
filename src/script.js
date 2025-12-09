@@ -45,25 +45,27 @@ function renderCard() {
   const cards = getCurrentCards();
   deckTitle.textContent = currentDeckName;
 
+  // reset flipped state visually
+  isCardFlipped = false;
+  const cardElem = document.querySelector('.card');
+  if (cardElem) cardElem.classList.remove('is-flipped');
+
   if (cards.length === 0) {
-    // Show empty state
     showEmptyState();
     return;
   }
 
-  // Show card area
   hideEmptyState();
 
   const card = cards[currentCardIndex];
-  cardFront.textContent = card.front;
-  cardBack.textContent = card.back;
-  isCardFlipped = false;
+  const front = document.querySelector('.card-front');
+  const back = document.querySelector('.card-back');
 
-  /* Reset card visibility */
-  cardFront.classList.remove('hidden');
-  cardFront.setAttribute('aria-hidden', 'false');
-  cardBack.classList.add('hidden');
-  cardBack.setAttribute('aria-hidden', 'true');
+  if (front) front.textContent = card.front;
+  if (back) back.textContent = card.back;
+
+  if (front) front.setAttribute('aria-hidden', 'false');
+  if (back) back.setAttribute('aria-hidden', 'true');
 }
 
 function showEmptyState() {
@@ -115,21 +117,15 @@ function flipCard() {
   const cards = getCurrentCards();
   if (cards.length === 0) return;
 
-  isCardFlipped = !isCardFlipped;
-  const cardFront = document.querySelector('.card-front');
-  const cardBack = document.querySelector('.card-back');
+  const cardElem = document.querySelector('.card');
+  const front = document.querySelector('.card-front');
+  const back = document.querySelector('.card-back');
 
-  if (isCardFlipped) {
-    cardFront.classList.add('hidden');
-    cardFront.setAttribute('aria-hidden', 'true');
-    cardBack.classList.remove('hidden');
-    cardBack.setAttribute('aria-hidden', 'false');
-  } else {
-    cardFront.classList.remove('hidden');
-    cardFront.setAttribute('aria-hidden', 'false');
-    cardBack.classList.add('hidden');
-    cardBack.setAttribute('aria-hidden', 'true');
-  }
+  isCardFlipped = !isCardFlipped;
+  if (cardElem) cardElem.classList.toggle('is-flipped', isCardFlipped);
+
+  if (front) front.setAttribute('aria-hidden', String(isCardFlipped));
+  if (back) back.setAttribute('aria-hidden', String(!isCardFlipped));
 }
 
 function nextCard() {
@@ -376,6 +372,19 @@ newDeckBtn.addEventListener('click', () => {
       renderCard();
     }
   });
+});
+
+// ensure card click flips (re-query card in case of DOM changes)
+document.addEventListener('click', (e) => {
+  const cardElem = document.querySelector('.card');
+  if (!cardElem) return;
+  if (cardElem.contains(e.target) && !e.target.matches('.btn')) {
+    // clicking the card should flip (but ignore toolbar/button clicks)
+    // only trigger when click is inside the card-inner area
+    if (e.target.closest('.card')) {
+      flipCard();
+    }
+  }
 });
 
 // ========================================

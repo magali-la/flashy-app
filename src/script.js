@@ -38,6 +38,12 @@ const deckList = document.querySelector('.deck-list');
 const cardContainer = document.querySelector('.card');
 const cardArea = document.querySelector('.flex.justify-center.items-center');
 
+/* ========================================
+   DOM Elements (additional)
+   ======================================== */
+const editCardBtn = document.getElementById('edit-card-btn');
+const deleteCardBtn = document.getElementById('delete-card-btn');
+
 // ========================================
 // Card Navigation & Display
 // ========================================
@@ -315,6 +321,47 @@ function openNewCardModal() {
     }
   });
 }
+
+/* ========================================
+   Edit / Delete handlers
+   ======================================== */
+function openEditCardModal() {
+  const cards = getCurrentCards();
+  if (!cards.length) return;
+
+  const card = cards[currentCardIndex];
+  const modal = new Modal('Edit Card', [
+    { label: 'Front (Question)', id: 'card-front', value: card.front },
+    { label: 'Back (Answer)', id: 'card-back', value: card.back },
+  ]);
+
+  modal.open((formData) => {
+    if (formData['card-front'].trim() && formData['card-back'].trim()) {
+      card.front = formData['card-front'];
+      card.back = formData['card-back'];
+      renderCard();
+    }
+  });
+}
+
+function deleteCurrentCard() {
+  const cards = getCurrentCards();
+  if (!cards.length) return;
+
+  const confirmed = window.confirm('Delete this card? This action cannot be undone.');
+  if (!confirmed) return;
+
+  cards.splice(currentCardIndex, 1);
+  // Adjust index
+  if (currentCardIndex >= cards.length) {
+    currentCardIndex = Math.max(0, cards.length - 1);
+  }
+  renderCard();
+}
+
+// Attach listeners safely (called once)
+if (editCardBtn) editCardBtn.addEventListener('click', openEditCardModal);
+if (deleteCardBtn) deleteCardBtn.addEventListener('click', deleteCurrentCard);
 
 // ========================================
 // Initialize: Mark Beginner French as active

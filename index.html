@@ -8,18 +8,38 @@
     <script src="./src/script.js" defer></script>
 </head>
 <body>
-    <heder>
-        <h1>Ready to Get Flashy?</h1>
-        <h2>To start studying:</h2>
-        <ul>
-            <li>Pick it</li>
-            <li>Flip it</li>
-            <li>Stick it</li>
-        </ul>
-        <p>Get started with Flashy, your study buddy</p>
-    </heder>
-    <main>
+    <!-- side bar header with decks and new deck button -->
+    <header class="site-header">
+        <aside class="sidebar" aria-label="Deck list">
+            <div class="sidebar-top">
+                <h3 class="sidebar-title">My Decks</h3>
+                <button class="btn new-deck" type="button" aria-label="Create new deck">+ New Deck</button>
+            </div>
+            <nav>
+                <ul class="deck-list">
+                    <li class="deck-item" tabindex="0">Beginner French</li>
+                    <li class="deck-item" tabindex="0">Coding 101</li>
+                    <li class="deck-item" tabindex="0">World Cuisines Class</li>
+                </ul>
+            </nav>
+        </aside>
+    </header>
 
+    <main class="main-area">
+        <section class="hero header-main">
+            <h1>Ready to Get Flashy?</h1>
+            <h2>To start studying:</h2>
+            <ul>
+                <li>Pick it</li>
+                <li>Flip it</li>
+                <li>Stick it</li>
+            </ul>
+            <p>Get started with Flashy, your study buddy</p>
+        </section>
+
+        <section class="main-content">
+            <!-- ...existing code... -->
+        </section>
     </main>
 </body>
 </html>

@@ -15,11 +15,12 @@
                 <h3 class="sidebar-title">My Decks</h3>
                 <button class="btn new-deck" type="button" aria-label="Create new deck">+ New Deck</button>
             </div>
-            <nav>
+            <nav aria-label="list of decks nav bar" role="navigation">
+                <!-- make list accessible by making them into buttons and move the classes over-->
                 <ul class="deck-list">
-                    <li class="deck-item" tabindex="0">Beginner French</li>
-                    <li class="deck-item" tabindex="0">Coding 101</li>
-                    <li class="deck-item" tabindex="0">World Cuisines Class</li>
+                    <li><button type="button" class="deck-item">Beginner Frenc</button></li>
+                    <li><button type="button" class="deck-item">Coding 101</button></li>
+                    <li><button type="button" class="deck-item">World Cuisines Class</button></li>
                 </ul>
             </nav>
         </aside>
@@ -39,25 +40,28 @@
 
         <section class="main-content">
             <!-- Deck title -->
-            <div class="deck-header">
-                <h2 class="deck-title">Beginner French</h2>
+            <div>
+                <h2>Beginner French</h2>
             </div>
 
             <!-- Toolbar: search, shuffle, new card -->
+            <!-- add accessible hidden label for search input -->
             <div class="toolbar">
-                <input type="text" class="search-input" placeholder="Search for cards..." aria-label="Search cards">
+                <label for="search-input" class="sr-only">Search for Cards</label>
+                <input type="text" id="search-input" placeholder="Search for cards...">
                 <button class="btn" type="button" aria-label="Shuffle deck">🔀 Shuffle</button>
                 <button class="btn" type="button" aria-label="Create new card">+ New Card</button>
             </div>
 
             <!-- Card display area -->
-            <div class="card-area">
+            <div>
                 <div class="card">
-                    <div class="card-inner">
-                        <div class="card-front">
+                    <!-- use accessible aria attributes and tailwind class for the toggle of cards to be flipped -->
+                    <div>
+                        <div class="card-front" aria-hidden="false">
                             <p>Bonjour</p>
                         </div>
-                        <div class="card-back" hidden>
+                        <div class="card-back hidden" aria-hidden="true">
                             <p>Hello</p>
                         </div>
                     </div>
@@ -72,7 +76,7 @@
             </div>
 
             <!-- Footer with instructions -->
-            <footer class="app-footer">
+            <footer>
                 <h3>How to use Flashy:</h3>
                 <ul>
                     <li><strong>Pick it:</strong> Select a deck from the sidebar to start studying.</li>

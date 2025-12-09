@@ -119,6 +119,10 @@ html, body {
     /* ensure focus shadow appears above siblings and isn't affected by stacking */
     position:relative;
     z-index:1;
+
+    /* add full width to span the sidebar and left align text nowthat it's a button */
+    width: 100%;
+    text-align: left;
   }
 
   .deck-item:hover,

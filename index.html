@@ -18,7 +18,7 @@
             <nav aria-label="list of decks nav bar" role="navigation">
                 <!-- make list accessible by making them into buttons and move the classes over-->
                 <ul class="deck-list">
-                    <li><button type="button" class="deck-item">Beginner Frenc</button></li>
+                    <li><button type="button" class="deck-item">Beginner French</button></li>
                     <li><button type="button" class="deck-item">Coding 101</button></li>
                     <li><button type="button" class="deck-item">World Cuisines Class</button></li>
                 </ul>
@@ -28,63 +28,61 @@
 
     <main class="main-area">
         <section class="hero header-main">
-            <h1>Ready to Get Flashy?</h1>
-            <h2>To start studying:</h2>
-            <ul>
+            <h1 class="text-5xl font-bold mb-4">Ready to Get Flashy?</h1>
+            <h2 class="text-2xl font-semibold mb-6">To start studying:</h2>
+            <ul class="list-disc list-inside space-y-2 mb-6 text-lg">
                 <li>Pick it</li>
                 <li>Flip it</li>
                 <li>Stick it</li>
             </ul>
-            <p>Get started with Flashy, your study buddy</p>
+            <p class="text-lg">Get started with Flashy, your study buddy</p>
         </section>
 
         <section class="main-content">
             <!-- Deck title -->
-            <div>
-                <h2>Beginner French</h2>
+            <div class="mb-8">
+                <h2 class="text-4xl font-bold">Beginner French</h2>
             </div>
 
             <!-- Toolbar: search, shuffle, new card -->
             <!-- add accessible hidden label for search input -->
-            <div class="toolbar">
+            <div class="toolbar mb-8 bg-gray-100 rounded-lg p-6 flex gap-4 items-center flex-wrap">
                 <label for="search-input" class="sr-only">Search for Cards</label>
-                <input type="text" id="search-input" placeholder="Search for cards...">
+                <input type="text" id="search-input" placeholder="Search for cards..." class="flex-1 min-w-64 px-4 py-3 rounded-2xl border-2 border-gray-300 text-lg focus:outline-none focus:ring-4 focus:ring-blue-300 focus:border-blue-500">
                 <button class="btn" type="button" aria-label="Shuffle deck">🔀 Shuffle</button>
                 <button class="btn" type="button" aria-label="Create new card">+ New Card</button>
             </div>
 
             <!-- Card display area -->
-            <div>
-                <div class="card">
-                    <!-- use accessible aria attributes and tailwind class for the toggle of cards to be flipped -->
-                    <div>
-                        <div class="card-front" aria-hidden="false">
-                            <p>Bonjour</p>
-                        </div>
-                        <div class="card-back hidden" aria-hidden="true">
-                            <p>Hello</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
+			<div class="flex justify-center items-center min-h-64 py-8">
+				<div class="card w-full max-w-md">
+					<!-- use accessible aria attributes and tailwind class for the toggle of cards to be flipped -->
+					<div class="card-front bg-blue-500 text-white rounded-lg shadow-md p-8 min-h-64 flex items-center justify-center text-center focus:ring-4 focus:ring-blue-300 focus:outline-none" aria-hidden="false" tabindex="0">
+						<p class="text-2xl font-semibold">Bonjour</p>
+					</div>
+					<div class="card-back hidden bg-white text-blue-500 rounded-lg shadow-md p-8 min-h-64 flex items-center justify-center text-center border-2 border-blue-500 focus:ring-4 focus:ring-blue-300 focus:outline-none" aria-hidden="true" tabindex="-1">
+						<p class="text-2xl font-semibold">Hello</p>
+					</div>
+				</div>
+			</div>
 
             <!-- Controls: prev, flip, next -->
-            <div class="card-controls">
-                <button class="btn" type="button" aria-label="Previous card">← Prev</button>
-                <button class="btn" type="button" aria-label="Flip card">⟳ Flip</button>
-                <button class="btn" type="button" aria-label="Next card">Next →</button>
+            <div class="card-controls flex justify-center gap-6 my-8">
+                <button class="btn px-6 py-3 text-lg" type="button" aria-label="Previous card">← Prev</button>
+                <button class="btn px-6 py-3 text-lg" type="button" aria-label="Flip card">⟳ Flip</button>
+                <button class="btn px-6 py-3 text-lg" type="button" aria-label="Next card">Next →</button>
             </div>
 
             <!-- Footer with instructions -->
-            <footer>
-                <h3>How to use Flashy:</h3>
-                <ul>
-                    <li><strong>Pick it:</strong> Select a deck from the sidebar to start studying.</li>
-                    <li><strong>Flip it:</strong> Click the card or press the Flip button to reveal the answer.</li>
-                    <li><strong>Stick it:</strong> Use Prev/Next to navigate through your cards and master them.</li>
-                </ul>
-                <p><em>Pro tip:</em> Use the Search bar to find specific cards, or Shuffle to randomize your study order.</p>
-            </footer>
+            <footer class="mt-12 bg-blue-500 text-white rounded-lg shadow-md p-8">
+				<h3 class="text-xl font-semibold mb-4">How to use Flashy:</h3>
+				<ul class="list-disc list-inside space-y-2 mb-4">
+					<li><strong>Pick it:</strong> Select a deck from the sidebar to start studying.</li>
+					<li><strong>Flip it:</strong> Click the card or press the Flip button to reveal the answer.</li>
+					<li><strong>Stick it:</strong> Use Prev/Next to navigate through your cards and master them.</li>
+				</ul>
+				<p class="text-sm italic opacity-90"><em>Pro tip:</em> Use the Search bar to find specific cards, or Shuffle to randomize your study order.</p>
+			</footer>
         </section>
     </main>
 </body>

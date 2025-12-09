@@ -127,10 +127,11 @@ html, body {
 
   .deck-item:hover,
   .deck-item:focus{
-    background: rgba(0,0,0,0.04);
+    background: var(--accent);
     outline: none;
     box-shadow: 0 0 0 4px var(--focus);
     border-radius:0.375rem;
+    color: var(--bg);
   }
 
   /* Hero / Header-main (moved into main) */

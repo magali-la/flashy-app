@@ -38,7 +38,38 @@
         </section>
 
         <section class="main-content">
-            <!-- ...existing code... -->
+            <!-- Deck title -->
+            <div class="deck-header">
+                <h2 class="deck-title">Beginner French</h2>
+            </div>
+
+            <!-- Toolbar: search, shuffle, new card -->
+            <div class="toolbar">
+                <input type="text" class="search-input" placeholder="Search for cards..." aria-label="Search cards">
+                <button class="btn" type="button" aria-label="Shuffle deck">🔀 Shuffle</button>
+                <button class="btn" type="button" aria-label="Create new card">+ New Card</button>
+            </div>
+
+            <!-- Card display area -->
+            <div class="card-area">
+                <div class="card">
+                    <div class="card-inner">
+                        <div class="card-front">
+                            <p>Bonjour</p>
+                        </div>
+                        <div class="card-back" hidden>
+                            <p>Hello</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Controls: prev, flip, next -->
+            <div class="card-controls">
+                <button class="btn" type="button" aria-label="Previous card">← Prev</button>
+                <button class="btn" type="button" aria-label="Flip card">⟳ Flip</button>
+                <button class="btn" type="button" aria-label="Next card">Next →</button>
+            </div>
         </section>
     </main>
 </body>
